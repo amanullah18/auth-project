@@ -15,5 +15,8 @@ export class UsersController {
     }
     return { id: user.id, fullName: user.fullName, email: user.email };
   }
+
+
+  
   
 }
