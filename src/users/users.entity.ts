@@ -19,4 +19,10 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ nullable: true })
+  roleId: number;
+  
+  @Column({ nullable: true })
+  profilePhotoUrl?: string;
 }

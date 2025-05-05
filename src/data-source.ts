@@ -1,5 +1,8 @@
+// src/data-source.ts
 import { DataSource } from 'typeorm';
-import { User } from './users/users.entity'; // ✅ No .ts or .js
+import { User } from './users/users.entity';
+import { Role } from './roles/roles.entity.js';
+import { RolePermission } from './roles/role-permission.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
