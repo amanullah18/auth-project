@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "migration:generate": "node --loader ts-node/esm node_modules/typeorm/cli.js migration:generate",
-    "migration:run": "node --loader ts-node/esm node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
+    "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create",
+    "migration:run": "ts-node -r tsconfig-paths/register ./src/data-source.ts migration:run",
     "migration:revert": "node --loader ts-node/esm node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -21,8 +21,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
-  },
+    "migration:show": "ts-node -r tsconfig-paths/register ./src/data-source.ts migration:show"
+      },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
     "@nestjs/common": "^11.0.1",
@@ -31,6 +31,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",
@@ -44,6 +45,8 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.22"
   },
   "devDependencies": {
@@ -62,6 +65,7 @@
     "@types/node": "^22.10.7",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",

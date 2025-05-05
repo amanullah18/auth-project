@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import {ProfileModule} from './profile/profile.module'
+import { TrainerSocialLinkModule } from './trainer/trainer-social-link.module'
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,6 +21,7 @@ import {ProfileModule} from './profile/profile.module'
     AuthModule,
     UsersModule,
     ProfileModule,
+    TrainerSocialLinkModule,
   ],
 })
 export class AppModule {}

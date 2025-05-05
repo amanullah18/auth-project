@@ -1,4 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { TrainerSocialLink } from 'src/trainer/trainer-social-link.entity'
+import { OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -25,4 +27,8 @@ export class User {
   
   @Column({ nullable: true })
   profilePhotoUrl?: string;
+
+  @OneToMany(() => TrainerSocialLink, (link) => link.trainer, { cascade: true })
+  socialLinks: TrainerSocialLink[];
+
 }
