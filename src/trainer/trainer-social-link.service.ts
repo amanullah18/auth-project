@@ -13,8 +13,11 @@ export class TrainerSocialLinkService {
     private repo: Repository<TrainerSocialLink>,
   ) {}
 
-  create(dto: CreateSocialLinkDto, trainer: User) {
-    const link = this.repo.create({ ...dto, trainer });
+  create(dto: CreateSocialLinkDto, trainer: Pick<User, 'id'>) {
+    const link = this.repo.create({
+      ...dto,
+      trainer: { id: trainer.id } as User,
+    });
     return this.repo.save(link);
   }
 
@@ -22,18 +25,19 @@ export class TrainerSocialLinkService {
     return this.repo.find({ where: { trainer } });
   }
 
-  async update(id: number, dto: UpdateSocialLinkDto, trainer: User) {
+  async update(id: number, dto: UpdateSocialLinkDto, userId: number) {
     const link = await this.repo.findOne({ where: { id }, relations: ['trainer'] });
     if (!link) throw new NotFoundException('Link not found');
-    if (link.trainer.id !== trainer.id) throw new ForbiddenException('Access denied');
+    if (link.trainer.id !== userId) throw new ForbiddenException('Access denied');
+
     Object.assign(link, dto);
     return this.repo.save(link);
   }
 
-  async remove(id: number, trainer: User) {
+  async remove(id: number, userId: number) {
     const link = await this.repo.findOne({ where: { id }, relations: ['trainer'] });
     if (!link) throw new NotFoundException('Link not found');
-    if (link.trainer.id !== trainer.id) throw new ForbiddenException('Access denied');
+    if (link.trainer.id !== userId) throw new ForbiddenException('Access denied');
     return this.repo.remove(link);
   }
 }

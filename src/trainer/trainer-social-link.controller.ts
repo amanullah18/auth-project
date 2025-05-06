@@ -25,12 +25,12 @@ import {
   
     @Post()
     create(@Body() dto: CreateSocialLinkDto, @Req() req) {
-      return this.service.create(dto, req.user);
+      const trainer = { id: req.user.userId }; // Use the correct ID field
+      return this.service.create(dto, trainer);
     }
-  
     @Get()
     findAll(@Req() req) {
-      return this.service.findAll(req.user);
+      return this.service.findAll(req.user.userId);
     }
   
     @Patch(':id')
@@ -39,12 +39,12 @@ import {
       @Body() dto: UpdateSocialLinkDto,
       @Req() req,
     ) {
-      return this.service.update(id, dto, req.user);
+      return this.service.update(id, dto, req.user.userId);
     }
   
     @Delete(':id')
     remove(@Param('id', ParseIntPipe) id: number, @Req() req) {
-      return this.service.remove(id, req.user);
+      return this.service.remove(id, req.user.userId);
     }
   }
   

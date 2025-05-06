@@ -12,7 +12,7 @@ export class UsersService {
     const user = this.repo.create(data);
     return this.repo.save(user);
   }
-
+ 
   findByEmail(email: string) {
     return this.repo.findOne({
       where: { email },
