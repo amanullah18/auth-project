@@ -16,7 +16,7 @@ export class UsersService {
   findByEmail(email: string) {
     return this.repo.findOne({
       where: { email },
-      select: ['id', 'email', 'password', 'roleId', 'fullName'], // include all needed fields
+      select: ['id', 'email', 'password', 'role_id', 'fullName'], // include all needed fields
     });
   }
 
@@ -25,7 +25,7 @@ export class UsersService {
   }
   async updateProfile(userId: number, dto: UpdateProfileDto, expectedRoleId: number) {
     const user = await this.findById(userId);
-    if (!user || user.roleId !== expectedRoleId) {
+    if (!user || user.role_id !== expectedRoleId) {
       throw new Error(`Only role ${expectedRoleId} can access this endpoint.`);
     }
   

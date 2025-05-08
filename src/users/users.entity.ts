@@ -23,7 +23,7 @@ export class User {
   updatedAt: Date;
 
   @Column({ nullable: true })
-  roleId: number;
+  role_id: number;
   
   @Column({ nullable: true })
   profilePhotoUrl?: string;
