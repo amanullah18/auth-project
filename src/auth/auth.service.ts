@@ -12,8 +12,8 @@ export class AuthService {
     console.log('User from DB:', user);
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
-      console.log('User with roleId:', { ...result, roleId: user.roleId });  // Add this log
-      return{ ...result,roleId: user.roleId };
+      console.log('User with roleId:', { ...result, roleId: user.role_id });  // Add this log
+      return{ ...result,roleId: user.role_id };
     }
     return null;
   }
