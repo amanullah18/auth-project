@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import {ProfileModule} from './profile/profile.module'
-import { TrainerSocialLinkModule } from './trainer/trainer-social-link.module'
+import {ProfileModule} from './modules/profile/profile.module'
+import { TrainerSocialLinkModule } from './modules/trainer/trainer-social-link.module'
+import { ImagesModule } from './modules/images/images.module';
+import { SkillsModule } from './modules/skills/skills.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -22,6 +24,8 @@ import { TrainerSocialLinkModule } from './trainer/trainer-social-link.module'
     UsersModule,
     ProfileModule,
     TrainerSocialLinkModule,
+    ImagesModule,
+    SkillsModule
   ],
 })
 export class AppModule {}
