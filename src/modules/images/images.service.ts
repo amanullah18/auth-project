@@ -16,8 +16,8 @@ export class ImagesService {
       throw new NotFoundException(`Image with filename ${filename} not found`);
     }
 
-    // Generate pre-signed URL
-    const url = await this.s3Service.generatePresignedUrl(filename);
+    // Generate pre-signed URL for uploading
+    const url = await this.s3Service.generatePresignedUploadUrl(filename, 1);  // Assuming userId=1 for this example
     
     return {
       url,

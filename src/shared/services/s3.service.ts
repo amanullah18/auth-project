@@ -1,127 +1,78 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3Service {
   private s3: AWS.S3;
-  private readonly bucketName: string;
+  private readonly bucketName = 'user-profile-images';
 
-  constructor(private readonly configService: ConfigService) {
-    this.bucketName = this.configService.get<string>('S3_BUCKET') || 'user-profile-images';
-
+  constructor(private configService: ConfigService) {
     this.s3 = new AWS.S3({
-      endpoint: this.configService.get<string>('S3_ENDPOINT') || 'http://localhost:9000',
-      accessKeyId: this.configService.get<string>('S3_ACCESS_KEY') || 'minioadmin',
-      secretAccessKey: this.configService.get<string>('S3_SECRET_KEY') || 'minioadmin',
+      endpoint: this.configService.get('S3_ENDPOINT') || 'http://localhost:9000',
+      accessKeyId: this.configService.get('S3_ACCESS_KEY') || 'minioadmin',
+      secretAccessKey: this.configService.get('S3_SECRET_KEY') || 'minioadmin',
       s3ForcePathStyle: true,
       signatureVersion: 'v4',
     });
   }
 
-  /**
-   * Upload file buffer to S3 for a specific trainer's gallery
-   */
-  async uploadFile(file: Express.Multer.File, trainerId: number): Promise<AWS.S3.ManagedUpload.SendData> {
-    const folder = `trainers/${trainerId}/gallery`; // Store in 'trainers/{trainerId}/gallery'
-    const key = `${folder}/${Date.now()}-${file.originalname}`;
-
+  // Existing method to upload a file
+  async uploadFile(file: Express.Multer.File,trainerId: number): Promise<AWS.S3.ManagedUpload.SendData> {
     const result = await this.s3
       .upload({
         Bucket: this.bucketName,
-        Key: key,
+        Key: `profile-images/${Date.now()}-${file.originalname}`,
         Body: file.buffer,
         ContentType: file.mimetype,
-        // ACL can be omitted to keep files private
+        ACL: 'public-read',
       })
       .promise();
 
     return result;
   }
 
-  /**
-   * Generate a pre-signed URL for uploading a gallery image
-   */
-  async generatePresignedUploadUrl(filename: string, trainerId: number): Promise<string> {
-    const folder = `trainers/${trainerId}/gallery`;
-    const key = `${folder}/${filename}`;
-
-    const params = {
-      Bucket: this.bucketName,
-      Key: key,
-      Expires: 300, // URL will expire after 5 minutes
-    };
-
-    return this.s3.getSignedUrlPromise('putObject', params); // 'putObject' is used for uploads
+  // New method to check if an object exists in S3
+  async objectExists(filename: string): Promise<boolean> {
+    try {
+      const headResult = await this.s3.headObject({
+        Bucket: this.bucketName,
+        Key: filename,
+      }).promise();
+      return headResult !== null;
+    } catch (error) {
+      return false; // Return false if the object doesn't exist
+    }
   }
 
-  /**
-   * Generate a pre-signed URL for viewing a gallery image
-   */
-  async generatePresignedUrl(filename: string, trainerId: number): Promise<string> {
-    const folder = `trainers/${trainerId}/gallery`;
-    const key = `${folder}/${filename}`;
-    const expireSeconds = parseInt(this.configService.get<string>('S3_URL_EXPIRE_SECONDS') || '300', 10);
-
+  // New method to generate pre-signed URL for uploading
+  async generatePresignedUploadUrl(
+    fileName: string,
+    userId: number,
+  ): Promise<string> {
     const params = {
       Bucket: this.bucketName,
-      Key: key,
-      Expires: expireSeconds,
+      Key: `profile-images/${userId}/${Date.now()}-${fileName}`,
+      Expires: 60 * 60, // 1 hour expiration
+      ContentType: 'application/octet-stream',
     };
 
-    return this.s3.getSignedUrlPromise('getObject', params); // 'getObject' is used for fetching objects
+    const url = await this.s3.getSignedUrlPromise('putObject', params);
+    return url;
   }
 
-  /**
-   * Delete a gallery image for a specific trainer
-   */
-  async deleteObject(filename: string, trainerId: number): Promise<void> {
-    const folder = `trainers/${trainerId}/gallery`;
-    const key = filename.startsWith(`${folder}/`) ? filename : `${folder}/${filename}`;
-
+  // New method to delete a file from S3
+  async deleteObject(fileName: string, userId: number): Promise<void> {
     const params = {
       Bucket: this.bucketName,
-      Key: key,
+      Key: `profile-images/${userId}/${fileName}`,
     };
 
     await this.s3.deleteObject(params).promise();
   }
 
-  /**
-   * Check if object exists in S3 for a specific trainer's gallery
-   */
-  async objectExists(filename: string, trainerId: number): Promise<boolean> {
-    const folder = `trainers/${trainerId}/gallery`;
-    const key = filename.startsWith(`${folder}/`) ? filename : `${folder}/${filename}`;
-
-    try {
-      await this.s3
-        .headObject({
-          Bucket: this.bucketName,
-          Key: key,
-        })
-        .promise();
-      return true;
-    } catch (error: any) {
-      if (error.code === 'NotFound') {
-        return false;
-      }
-      throw error;
-    }
-  }
-
-  /**
-   * List all images for a specific trainer's gallery
-   */
-  async listImages(trainerId: number): Promise<AWS.S3.ObjectList> {
-    const folder = `trainers/${trainerId}/gallery`;
-
-    const params = {
-      Bucket: this.bucketName,
-      Prefix: folder,
-    };
-
-    const data = await this.s3.listObjectsV2(params).promise();
-    return data.Contents || [];
+  // New method for generating a public URL for an existing file
+  getPublicUrl(fileName: string, userId: number): string {
+    return `https://${this.bucketName}.s3.amazonaws.com/profile-images/${userId}/${fileName}`;
   }
 }

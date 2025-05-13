@@ -1,58 +1,70 @@
 import {
   Controller,
   Post,
-  Put,
   Get,
+  Patch,
   Delete,
   Param,
   Body,
-  ParseUUIDPipe,
+  UploadedFiles,
+  UseInterceptors,
+  UseGuards,
+  Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TrainerSkillsService } from './trainer-skills.service';
 import { CreateTrainerSkillDto } from './dto/create-trainer-skill.dto';
 import { UpdateTrainerSkillDto } from './dto/update-trainer-skill.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../modules/auth/guards/roles.guard';
+import { Roles } from 'src/modules/roles/decorators/roles.decorator';
+import { UserRole } from 'src/modules/auth/common/constants/user-roles';
 
-@Controller('trainer/:trainer_id/skills')
+@Controller('trainer/skills')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.TRAINER)
 export class TrainerSkillsController {
   constructor(private readonly trainerSkillsService: TrainerSkillsService) {}
 
-  @Post(':skill_id')
-  createTrainerSkill(
-    @Param('trainer_id', new ParseUUIDPipe()) trainer_id: string,
-    @Param('skill_id', new ParseUUIDPipe()) skill_id: string,
-    @Body() dto: CreateTrainerSkillDto,
+  // Create a skill with optional images
+  @Post()
+  @UseInterceptors(FilesInterceptor('images'))
+  async create(
+    @Request() req,
+    @Body() createDto: CreateTrainerSkillDto,
+    @UploadedFiles() files: Express.Multer.File[]
   ) {
-    return this.trainerSkillsService.createTrainerSkill(trainer_id, skill_id, dto);
+    const trainer = req.user;
+    return this.trainerSkillsService.create(trainer, createDto, files || []);
   }
 
-  @Put(':skill_id')
-  updateTrainerSkill(
-    @Param('trainer_id', new ParseUUIDPipe()) trainer_id: string,
-    @Param('skill_id', new ParseUUIDPipe()) skill_id: string,
-    @Body() dto: UpdateTrainerSkillDto,
-  ) {
-    return this.trainerSkillsService.updateTrainerSkill(trainer_id, skill_id, dto);
-  }
-
+  // Get all skills for all trainers (can restrict later)
   @Get()
-  getTrainerSkills(@Param('trainer_id', new ParseUUIDPipe()) trainer_id: string) {
-    return this.trainerSkillsService.getTrainerSkills(trainer_id);
+  async findAll() {
+    return this.trainerSkillsService.findAll();
   }
 
-  @Delete(':skill_id')
-  deleteTrainerSkill(
-    @Param('trainer_id', new ParseUUIDPipe()) trainer_id: string,
-    @Param('skill_id', new ParseUUIDPipe()) skill_id: string,
-  ) {
-    return this.trainerSkillsService.deleteTrainerSkill(trainer_id, skill_id);
+  // Get a specific skill
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.trainerSkillsService.findOne(id);
   }
 
-  @Post(':skill_id/images')
-  addTrainerSkillImages(
-    @Param('trainer_id', new ParseUUIDPipe()) trainer_id: string,
-    @Param('skill_id', new ParseUUIDPipe()) skill_id: string,
-    @Body('files') files: string[],
+  // Update a trainer skill (trainer must own it)
+  @Patch(':id')
+  async update(
+    @Param('id') id: string,
+    @Request() req,
+    @Body() updateDto: UpdateTrainerSkillDto
   ) {
-    return this.trainerSkillsService.addTrainerSkillImages(trainer_id, skill_id, files);
+    return this.trainerSkillsService.update(id, req.user, updateDto);
+  }
+
+  // Delete a skill and associated images
+  @Delete(':id')
+  async remove(@Param('id') id: string, @Request() req) {
+    return this.trainerSkillsService.delete(id, req.user);
   }
 }
+ 

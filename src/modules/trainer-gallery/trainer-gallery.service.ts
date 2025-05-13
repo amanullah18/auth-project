@@ -75,7 +75,7 @@ export class TrainerGalleryService {
         const imageUrls = await Promise.all(
             images.map(async (image) => ({
                 ...image,
-                signedUrl: await this.s3Service.generatePresignedUrl(image.fileUrl, trainerId), // Pass trainerId to get the correct URL
+                signedUrl: await this.s3Service.generatePresignedUploadUrl(image.fileUrl, trainerId), // Pass trainerId to get the correct URL
             })),
         );
 
