@@ -10,6 +10,14 @@ import { TrainerSocialLinkModule } from './modules/trainer/trainer-social-link.m
 import { ImagesModule } from './modules/images/images.module';
 import { SkillsModule } from './modules/skills/skills.module';
 import { TrainerSkillsModule } from './modules/trainer-skills/trainer-skills.module';
+import {User} from "src/modules/users/entities/users.entity"
+import {TrainerSkillImage} from "src/modules/trainer-skills/entities/trainer-skill-image.entity"
+import {TrainerSkill} from "src/modules/trainer-skills/entities/trainer-skill.entity"
+import {GalleryImage} from "src/modules/trainer-gallery/entities/trainer-gallery.entity"
+import {TrainerSocialLink} from "src/modules/trainer/entities/trainer-social-link.entity"
+import {Skill} from "src/modules/skills/entities/skill.entity"
+import {Role} from "src/modules/roles/entities/roles.entity"
+import {RolePermission} from "src/modules/roles/entities/role-permission.entity"
 
 @Module({
   imports: [
@@ -24,7 +32,7 @@ import { TrainerSkillsModule } from './modules/trainer-skills/trainer-skills.mod
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [__dirname + '/dist/**/*.entity{.ts,.js}'],
+        entities: [User,TrainerSkill,TrainerSkillImage,Role,RolePermission,Skill,GalleryImage,TrainerSocialLink],
         synchronize: false,
       }),
     }),

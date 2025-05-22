@@ -4,23 +4,24 @@ export class TrainerskillsImages1715600000007 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create trainer_skill_images table
     await queryRunner.createTable(
-      new Table({ 
+      new Table({
         name: 'trainer_skill_images',
         columns: [
           {
             name: 'id',
-            type: 'uuid',
-            isPrimary: true, 
+            type: 'int', // ✅ Use int instead of number
+            isPrimary: true,
             isGenerated: true,
-            generationStrategy: 'uuid',
+            generationStrategy: 'increment', // ✅ Use increment for numeric PK
           },
           {
             name: 'trainerSkillId',
-            type: 'uuid',
+            type: 'int', // ✅ Corrected type
           },
           {
             name: 'image_url',
             type: 'varchar',
+            length: '255',
           },
           {
             name: 'created_at',
@@ -44,25 +45,15 @@ export class TrainerskillsImages1715600000007 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Get the table
     const table = await queryRunner.getTable('trainer_skill_images');
-    
-    // Check if the table is found before accessing foreign keys
     if (table) {
-      // Find the foreign key for trainerSkillId
       const foreignKey = table.foreignKeys.find(
-        (fk) => fk.columnNames.indexOf('trainerSkillId') !== -1,
+        (fk) => fk.columnNames.includes('trainerSkillId'),
       );
-
-      // If foreign key exists, drop it
       if (foreignKey) {
         await queryRunner.dropForeignKey('trainer_skill_images', foreignKey);
       }
-
-      // Drop the trainer_skill_images table
       await queryRunner.dropTable('trainer_skill_images');
-    } else {
-      console.log("Table 'trainer_skill_images' not found, skipping foreign key drops.");
     }
   }
 }

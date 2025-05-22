@@ -57,7 +57,7 @@ export class TrainerSkillsService {
     return this.trainerSkillRepo.find({ relations: ['images', 'skill', 'trainer'] });
   }
 
-  async findOne(id: string): Promise<TrainerSkill> {
+  async findOne(id: number): Promise<TrainerSkill> {
     const skill = await this.trainerSkillRepo.findOne({
       where: { id },
       relations: ['images', 'skill', 'trainer'],
@@ -69,7 +69,7 @@ export class TrainerSkillsService {
   }
 
   async update(
-    id: string,
+    id: number,
     trainer: User,
     updateDto: UpdateTrainerSkillDto
   ): Promise<TrainerSkill> {
@@ -84,8 +84,8 @@ export class TrainerSkillsService {
     Object.assign(skill, updateDto);
     return this.trainerSkillRepo.save(skill);
   }
-
-  async delete(id: string, trainer: User): Promise<void> {
+ 
+  async delete(id: number, trainer: User): Promise<void> {
     const skill = await this.trainerSkillRepo.findOne({
       where: { id },
       relations: ['images', 'trainer'],

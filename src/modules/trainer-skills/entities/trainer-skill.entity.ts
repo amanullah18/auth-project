@@ -15,8 +15,8 @@ import { TrainerSkillImage } from '../entities/trainer-skill-image.entity';
 
 @Entity('trainer_skills')
 export class TrainerSkill {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => User, (user) => user.trainerSkills, { eager: true })
   trainer: User;

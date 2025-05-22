@@ -15,10 +15,8 @@ export class Trainerskills1715600000006 implements MigrationInterface {
           },
           { 
             name: 'trainerId',
-            type: 'int',
-            length: '11',  // Added length to match users.id
+            type: 'int', 
             isNullable: false,
-            unsigned: false, // Explicitly set to match users.id
           },
           {
             name: 'skillId',
@@ -57,7 +55,7 @@ export class Trainerskills1715600000006 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['trainerId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'users',
+        referencedTableName: 'user',
         onDelete: 'CASCADE',
       }),
     );

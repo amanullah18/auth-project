@@ -47,14 +47,14 @@ export class TrainerSkillsController {
 
   // Get a specific skill
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: number) {
     return this.trainerSkillsService.findOne(id);
   }
 
   // Update a trainer skill (trainer must own it)
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Request() req,
     @Body() updateDto: UpdateTrainerSkillDto
   ) {
@@ -63,7 +63,7 @@ export class TrainerSkillsController {
 
   // Delete a skill and associated images
   @Delete(':id')
-  async remove(@Param('id') id: string, @Request() req) {
+  async remove(@Param('id') id: number, @Request() req) {
     return this.trainerSkillsService.delete(id, req.user);
   }
 }

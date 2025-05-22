@@ -5,7 +5,7 @@ import { TrainerSocialLink } from '../../trainer/entities/trainer-social-link.en
 import { TrainerSkill } from '../../trainer-skills/entities/trainer-skill.entity'; // ✅ Adjust this path as needed
 
 
-@Entity('users')
+@Entity("User")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,7 +15,6 @@ export class User {
 
   @Column({ unique: true })
   email: string;
-  
   @Column()
   password: string;
 
