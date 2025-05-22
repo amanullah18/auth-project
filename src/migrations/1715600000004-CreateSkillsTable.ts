@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateSkillsTable1747088916425 implements MigrationInterface {
+export class CreateSkillsTable1715600000004 implements MigrationInterface {
+  name = 'CreateSkillsTable1715600000004';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -8,10 +10,11 @@ export class CreateSkillsTable1747088916425 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'uuid',
+            type: 'varchar',
+            length: '36',
             isPrimary: true,
             generationStrategy: 'uuid',
-            default: 'uuid_generate_v4()',
+            default: '(UUID())', // MySQL UUID function
           },
           {
             name: 'name',
@@ -46,7 +49,7 @@ export class CreateSkillsTable1747088916425 implements MigrationInterface {
             name: 'updatedAt',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
-            onUpdate: 'CURRENT_TIMESTAMP', // Automatically update on changes
+            onUpdate: 'CURRENT_TIMESTAMP',
           },
         ],
       }),

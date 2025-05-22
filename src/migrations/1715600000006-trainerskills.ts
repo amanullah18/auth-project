@@ -1,35 +1,40 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class Trainerskills1747147181014 implements MigrationInterface {
-
+export class Trainerskills1715600000006 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create the trainer_skills table
     await queryRunner.createTable(
       new Table({
         name: 'trainer_skills',
         columns: [
           {
             name: 'id',
-            type: 'uuid',
+            type: 'int',
             isPrimary: true,
             isGenerated: true,
-            generationStrategy: 'uuid',
+            generationStrategy: 'increment',
           },
-          {
+          { 
             name: 'trainerId',
-            type: 'uuid',
+            type: 'int',
+            length: '11',  // Added length to match users.id
+            isNullable: false,
+            unsigned: false, // Explicitly set to match users.id
           },
           {
             name: 'skillId',
-            type: 'uuid',
+            type: 'varchar',
+            length: '36',
+            isNullable: false,
           },
           {
             name: 'experience_desc',
             type: 'text',
+            isNullable: false,
           },
           {
             name: 'years_of_experience',
             type: 'int',
+            isNullable: false,
           },
           {
             name: 'created_at',
@@ -40,12 +45,13 @@ export class Trainerskills1747147181014 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
+            onUpdate: 'CURRENT_TIMESTAMP',
           },
         ],
       }),
     );
 
-    // Add foreign key for trainerId
+    // Create foreign key for trainerId -> users.id
     await queryRunner.createForeignKey(
       'trainer_skills',
       new TableForeignKey({
@@ -56,7 +62,7 @@ export class Trainerskills1747147181014 implements MigrationInterface {
       }),
     );
 
-    // Add foreign key for skillId
+    // Create foreign key for skillId -> skills.id (assuming skills table exists)
     await queryRunner.createForeignKey(
       'trainer_skills',
       new TableForeignKey({
@@ -69,29 +75,16 @@ export class Trainerskills1747147181014 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Get the table 'trainer_skills'
     const table = await queryRunner.getTable('trainer_skills');
 
     if (table) {
-      // Drop the foreign keys if they exist
-      const foreignKey1 = table.foreignKeys.find(
-        (fk) => fk.columnNames.indexOf('trainerId') !== -1,
-      );
-      const foreignKey2 = table.foreignKeys.find(
-        (fk) => fk.columnNames.indexOf('skillId') !== -1,
-      );
+      const fk1 = table.foreignKeys.find(fk => fk.columnNames.includes('trainerId'));
+      const fk2 = table.foreignKeys.find(fk => fk.columnNames.includes('skillId'));
 
-      if (foreignKey1) {
-        await queryRunner.dropForeignKey('trainer_skills', foreignKey1);
-      }
-      if (foreignKey2) {
-        await queryRunner.dropForeignKey('trainer_skills', foreignKey2);
-      }
+      if (fk1) await queryRunner.dropForeignKey('trainer_skills', fk1);
+      if (fk2) await queryRunner.dropForeignKey('trainer_skills', fk2);
 
-      // Drop the trainer_skills table
       await queryRunner.dropTable('trainer_skills');
-    } else {
-      console.log("Table 'trainer_skills' not found, skipping foreign key drops.");
     }
   }
 }

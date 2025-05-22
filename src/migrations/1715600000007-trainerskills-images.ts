@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class TrainerskillsImages1747147197086 implements MigrationInterface {
+export class TrainerskillsImages1715600000007 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create trainer_skill_images table
     await queryRunner.createTable(
-      new Table({
+      new Table({ 
         name: 'trainer_skill_images',
         columns: [
           {
             name: 'id',
             type: 'uuid',
-            isPrimary: true,
+            isPrimary: true, 
             isGenerated: true,
             generationStrategy: 'uuid',
           },

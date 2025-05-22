@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  db:
+  mysql-db:  # ✅ match this with DB_HOST below
     image: mysql:8.0
     container_name: mysql-db
     restart: always
@@ -10,7 +10,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: task1
     ports:
-      - "3307:3306"  # Access MySQL from host at localhost:3307
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -31,20 +31,20 @@ services:
     build: .
     container_name: nest-app
     ports:
-      - "3000:3000" # Expose NestJS app on localhost:3000
+      - "3000:3000"
     depends_on:
-      - db
+      - mysql-db
       - minio
     environment:
-      DB_HOST: mysql-db
-      DB_PORT: 3306
+      DB_HOST: mysql-db        # ✅ use the correct service name here
+      DB_PORT: 3306            # ✅ use container's internal port
       DB_USERNAME: root
-      DB_PASSWORD: ""  # if you're allowing empty password
+      DB_PASSWORD: ""
       DB_NAME: task1
     volumes:
       - .:/app
     working_dir: /app
-    command: npm run start:dev  # or however you start your app
+    command: npm run start:dev
 
 volumes:
   mysql_data:

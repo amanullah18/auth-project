@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class UserTable1746179633306 implements MigrationInterface {
-  name = 'UserTable1746179633306';
+export class UserTable1715600000002 implements MigrationInterface {
+  name = 'UserTable1715600000002';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create the user table
+    // Create the user table with roleId column included
     await queryRunner.createTable(
       new Table({
-        name: 'user',
+        name: 'user', 
         columns: [
           {
             name: 'id',
@@ -64,20 +64,33 @@ export class UserTable1746179633306 implements MigrationInterface {
       }),
     );
 
-    // If you have a 'roles' table, add the foreign key for roleId
-    // Remove this part if the roles table does not exist yet
+    // Add the foreign key for roleId (roles table already exists at this point)
     await queryRunner.createForeignKey(
       'user',
       new TableForeignKey({
         columnNames: ['roleId'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'roles', // Adjust this if you have a different table name for roles
-        onDelete: 'SET NULL', // Adjust the delete behavior if needed
+        referencedTableName: 'roles',
+        onDelete: 'SET NULL',
       }),
     );
+
+    // Seed permissions data (moved from CreateRolePermissions migration)
+    await queryRunner.query(`
+      INSERT INTO \`roles_has_permissions\` (\`id\`, \`role_id\`, \`permission_name\`)
+      SELECT UUID(), id, 'UPLOAD_PROFILE_PHOTO' FROM \`roles\`;
+    `);
+
+    await queryRunner.query(`
+      INSERT INTO \`roles_has_permissions\` (\`id\`, \`role_id\`, \`permission_name\`)
+      SELECT UUID(), id, 'UPDATE_PROFILE_INFO' FROM \`roles\`;
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // Clean up permissions data
+    await queryRunner.query(`DELETE FROM \`roles_has_permissions\` WHERE \`permission_name\` IN ('UPLOAD_PROFILE_PHOTO', 'UPDATE_PROFILE_INFO');`);
+
     // Drop the foreign key for roleId
     const table = await queryRunner.getTable('user');
     const foreignKey = table?.foreignKeys.find(fk => fk.columnNames.indexOf('roleId') !== -1);

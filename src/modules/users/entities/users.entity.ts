@@ -1,11 +1,11 @@
 // src/users/entities/users.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { GalleryImage } from '../../trainer-gallery/entities/trainer-gallery.entity'; // Adjust path as needed
-import { TrainerSocialLink } from 'src/modules/trainer/entities/trainer-social-link.entity';
+import { TrainerSocialLink } from '../../trainer/entities/trainer-social-link.entity';
 import { TrainerSkill } from '../../trainer-skills/entities/trainer-skill.entity'; // ✅ Adjust this path as needed
 
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,7 +15,7 @@ export class User {
 
   @Column({ unique: true })
   email: string;
-
+  
   @Column()
   password: string;
 

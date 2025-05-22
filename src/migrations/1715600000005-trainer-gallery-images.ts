@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class CreateTrainerSocialLinks1746479292199 implements MigrationInterface {
+export class CreateGalleryImagesTable1715600000005 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'trainer_social_links',
+        name: 'gallery_images',
         columns: [
           {
             name: 'id',
@@ -14,27 +14,31 @@ export class CreateTrainerSocialLinks1746479292199 implements MigrationInterface
             generationStrategy: 'increment',
           },
           {
-            name: 'platform',
+            name: 'filename',
             type: 'varchar',
           },
           {
-            name: 'url',
+            name: 'fileUrl',
             type: 'varchar',
           },
           {
-            name: 'trainerId',
+            name: 'caption',
+            type: 'varchar',
+            isNullable: true,
+          },
+          {
+            name: 'sortOrder',
             type: 'int',
+            isNullable: true,
           },
           {
-            name: 'createdAt',
+            name: 'uploadTimestamp',
             type: 'datetime',
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'updatedAt',
-            type: 'datetime',
-            default: 'CURRENT_TIMESTAMP',
-            onUpdate: 'CURRENT_TIMESTAMP',
+            name: 'user_id',
+            type: 'int',
           },
         ],
       }),
@@ -42,9 +46,9 @@ export class CreateTrainerSocialLinks1746479292199 implements MigrationInterface
     );
 
     await queryRunner.createForeignKey(
-      'trainer_social_links',
+      'gallery_images',
       new TableForeignKey({
-        columnNames: ['trainerId'],
+        columnNames: ['user_id'],
         referencedTableName: 'user',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
@@ -53,13 +57,13 @@ export class CreateTrainerSocialLinks1746479292199 implements MigrationInterface
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const table = await queryRunner.getTable('trainer_social_links');
+    const table = await queryRunner.getTable('gallery_images');
     if (table) {
-      const foreignKey = table.foreignKeys.find((fk) => fk.columnNames.indexOf('trainerId') !== -1);
+      const foreignKey = table.foreignKeys.find((fk) => fk.columnNames.includes('user_id'));
       if (foreignKey) {
-        await queryRunner.dropForeignKey('trainer_social_links', foreignKey);
+        await queryRunner.dropForeignKey('gallery_images', foreignKey);
       }
     }
-    await queryRunner.dropTable('trainer_social_links');
+    await queryRunner.dropTable('gallery_images');
   }
 }

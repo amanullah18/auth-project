@@ -6,9 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "npx typeorm migration":"show -d src/datasource/data-source.ts -r ts-node/register",
     "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:create",
-    "migration:run": "ts-node -r tsconfig-paths/register ./src/datasource/data-source.ts migration:run",
-    "migration:revert": "node --loader ts-node/esm node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",
+    "migration:revert": "ts-node node_modules/typeorm/cli.js migration:revert -d src/datasource/data-source.ts",
+    "migration:run": "ts-node node_modules/typeorm/cli.js migration:run -d src/datasource/data-source.ts",
+    "migration:show": "ts-node -r tsconfig-paths/register ./src/datasource/data-source.ts migration:show",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -20,8 +22,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:show": "ts-node -r tsconfig-paths/register ./src/data-source.ts migration:show"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.802.0",
@@ -34,7 +35,7 @@
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
     "aws-sdk": "^2.1692.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "multer": "^1.4.5-lts.2",

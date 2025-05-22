@@ -13,22 +13,19 @@ import { TrainerSkillsModule } from './modules/trainer-skills/trainer-skills.mod
 
 @Module({
   imports: [
-    // Load .env variables globally
     ConfigModule.forRoot({ isGlobal: true }),
-
-    // Use ConfigService to inject DB config
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: +config.get<number>('DB_PORT', 3306),
-        username: config.get<string>('DB_USERNAME', 'root'),
-        password: config.get<string>('DB_PASSWORD', ''),
-        database: config.get<string>('DB_NAME', 'task1'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Use migrations, not sync in production
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: [__dirname + '/dist/**/*.entity{.ts,.js}'],
+        synchronize: false,
       }),
     }),
 
