@@ -10,7 +10,14 @@ async function bootstrap() {
     .setTitle('Image Upload & Access API')
     .setDescription('APIs for uploading images and generating pre-signed URLs from S3')
     .setVersion('1.0')
-    .addBearerAuth() // Use if endpoints require JWT auth
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-access-token',
+        in: 'header',
+      },
+      'x-access-token', // This must match the string used in @ApiBearerAuth()
+    ) // Use if endpoints require JWT auth
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

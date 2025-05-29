@@ -15,10 +15,11 @@ import {
   import { UpdateSocialLinkDto } from '../trainer/dtos/update-social-link.dto';
   import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard'; // adjust path
   import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-  
+   
   @ApiTags('Trainer Social Links')
-  @ApiBearerAuth()
+  
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('x-access-token')
   @Controller('trainer/social-links')
   export class TrainerSocialLinkController {
     constructor(private readonly service: TrainerSocialLinkService) {}
