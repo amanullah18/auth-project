@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
-import { ROLES_KEY } from 'src/modules/roles/decorators/roles.decorator';
-import { UserRole } from 'src/modules/auth/common/constants/user-roles';
+import { ROLES_KEY } from '../../roles/decorators/roles.decorator';
+import { UserRole } from '../common/constants/user-roles';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,7 +24,8 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('Access denied: User not authenticated');
     }
 
-    const hasRole = roles.some(role => user.role === role);
+    const hasRole = roles.some(role => user.roleId === role);
+    console.log("roleget",hasRole)
     if (!hasRole) {
       throw new ForbiddenException('Access denied: Insufficient role');
     }

@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/users.entity';
-import { UpdateProfileDto } from '../profile/dto/update-profile.dto';
-
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private repo: Repository<User>) {}
@@ -23,14 +21,4 @@ export class UsersService {
   findById(id: number) {
     return this.repo.findOne({ where: { id } });
   }
-  async updateProfile(userId: number, dto: UpdateProfileDto, expectedRoleId: number) {
-    const user = await this.findById(userId);
-    if (!user || user.roleId !== expectedRoleId) {
-      throw new Error(`Only role ${expectedRoleId} can access this endpoint.`);
-    }
-  
-    Object.assign(user, dto);
-    return this.repo.save(user);
-  }
 }
-

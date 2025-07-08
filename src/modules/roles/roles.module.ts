@@ -1,8 +1,8 @@
 // src/roles/roles.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Role } from 'src/modules/roles/entities/roles.entity';
-import { RolePermission } from 'src/modules/roles/entities/role-permission.entity';
+import { Role } from '../roles/entities/roles.entity';
+import { RolePermission } from '../roles/entities/role-permission.entity';
 import { RolesService } from './roles.service'; // The service handling business logic
 import { RolesController } from './role.controller'; // The controller to handle API requests
 

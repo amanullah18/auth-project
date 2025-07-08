@@ -49,12 +49,6 @@ export class UserTable1715600000002 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'profilePhotoUrl',
-            type: 'varchar',
-            length: '255',
-            isNullable: true,
-          },
-          {
             name: 'gender',
             type: 'enum',
             enum: ['MALE', 'FEMALE', 'OTHER'],
@@ -97,7 +91,6 @@ export class UserTable1715600000002 implements MigrationInterface {
     if (foreignKey) {
       await queryRunner.dropForeignKey('user', foreignKey);
     }
-
     // Drop the user table
     await queryRunner.dropTable('user');
   }

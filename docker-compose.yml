@@ -32,7 +32,7 @@ services:
     container_name: nest-app
     ports:
       - "3000:3000"
-    depends_on:
+    depends_on:   
       - mysql-db
       - minio
     environment:
